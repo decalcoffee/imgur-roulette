@@ -58,5 +58,20 @@ def download_images_to_disk(urls):
 
 
 if __name__ == "__main__":
-    random_urls = get_n_random_image_urls(1)
+    import argparse
+    help_description = "Download random images from Imgur."
+    arg_parser = argparse.ArgumentParser(description=help_description)
+    arg_parser.add_argument("-n",
+                            dest="number_of_files",
+                            action="store",
+                            type=int)
+
+    args = arg_parser.parse_args()
+    if not args.number_of_files:
+        print "ERROR: Specify a number of files to download."
+        print "Pass -h for help."
+        import sys
+        sys.exit()
+
+    random_urls = get_n_random_image_urls(args.number_of_files)
     download_images_to_disk(random_urls)
