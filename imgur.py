@@ -3,6 +3,8 @@ import random
 import requests
 import string
 
+BASE_URL = "http://www.imgur.com/"
+
 def get_url_hash():
     counter = 0
     url_hash = ''
