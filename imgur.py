@@ -16,10 +16,12 @@ def get_url_hash():
         counter += 1
     return url_hash
 
-def make_web_request(url):
-    markup = requests.get(url)
-    import ipdb; ipdb.set_trace()
+def get_n_random_images(n):
+    for i in range(n):
+        response = requests.get(BASE_URL + get_url_hash())
+        while response.status_code != 200:
+            response = requests.get(BASE_URL + get_url_hash())
+        print response
 
 if __name__ == "__main__":
-    harsh = get_url_hash()
-    make_web_request(BASE_URL + harsh)
+    get_n_random_images(10)
