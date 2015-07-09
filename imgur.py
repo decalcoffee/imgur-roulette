@@ -44,27 +44,38 @@ def get_n_random_image_urls(n):
             urls.append(webm_element.attrs["src"])
     return urls
 
-def download_images_to_disk(urls):
+def download_images_to_disk(urls, directory="images"):
     for i, url in enumerate(urls):
         # All the urls in the array have '//' prepended. Rolling with it.
         response = requests.get('http:' + url, stream=True)
         filename, ext = get_file_name_from_url(url)
-        local_filepath = './images/{}{}'.format(filename, ext)
+        local_filepath = "./"+directory+"/{}{}".format(filename, ext)
         if not os.path.exists(os.path.dirname(local_filepath)):
             os.makedirs(os.path.dirname(local_filepath))
         with open(local_filepath, 'wb') as f:
             for chunk in response:
                 f.write(chunk)
 
-
-if __name__ == "__main__":
+def parse_cli_args():
     import argparse
     help_description = "Download random images from Imgur."
     arg_parser = argparse.ArgumentParser(description=help_description)
+
     arg_parser.add_argument("-n",
                             dest="number_of_files",
                             action="store",
+                            help="Number of random images to download",
                             type=int)
+
+    dir_help_text = ("Directory to store downloaded images to. "
+        "This is optional. It defaults to `images/` and will create the "
+        "directory if it does not already exist in any case."
+    )
+    arg_parser.add_argument("-d",
+                            dest="directory",
+                            action="store",
+                            help=dir_help_text,
+                            type=str)
 
     args = arg_parser.parse_args()
     if not args.number_of_files:
@@ -73,5 +84,18 @@ if __name__ == "__main__":
         import sys
         sys.exit()
 
-    random_urls = get_n_random_image_urls(args.number_of_files)
-    download_images_to_disk(random_urls)
+    if args.directory:
+        directory = args.directory.strip("./")
+    else:
+        directory = ""
+
+    return args.number_of_files, directory
+
+
+if __name__ == "__main__":
+    number_of_files, directory = parse_cli_args()
+    random_urls = get_n_random_image_urls(number_of_files)
+    if directory:
+        download_images_to_disk(random_urls, directory)
+    else:
+        download_images_to_disk(random_urls)
