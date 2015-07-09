@@ -47,12 +47,12 @@ def get_n_random_image_urls(n):
 def download_images_to_disk(urls, directory="images"):
     for i, url in enumerate(urls):
         # All the urls in the array have '//' prepended. Rolling with it.
-        response = requests.get('http:' + url, stream=True)
+        response = requests.get("http:" + url, stream=True)
         filename, ext = get_file_name_from_url(url)
         local_filepath = "./"+directory+"/{}{}".format(filename, ext)
         if not os.path.exists(os.path.dirname(local_filepath)):
             os.makedirs(os.path.dirname(local_filepath))
-        with open(local_filepath, 'wb') as f:
+        with open(local_filepath, "wb") as f:
             for chunk in response:
                 f.write(chunk)
 
