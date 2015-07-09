@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from bs4 import BeautifulSoup
 import random
 import requests
@@ -13,3 +15,11 @@ def get_url_hash():
         url_hash += random_letter
         counter += 1
     return url_hash
+
+def make_web_request(url):
+    markup = requests.get(url)
+    import ipdb; ipdb.set_trace()
+
+if __name__ == "__main__":
+    harsh = get_url_hash()
+    make_web_request(BASE_URL + harsh)
