@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 from bs4 import BeautifulSoup
+import os.path
 import random
 import requests
 import shutil
 import string
+from urlparse import urlparse
 
 BASE_URL = "http://www.imgur.com/"
 
@@ -16,6 +18,12 @@ def get_url_hash():
         url_hash += random_letter
         counter += 1
     return url_hash
+
+def get_file_name_from_url(url):
+    parsed_url = urlparse(url)
+    from os.path import splitext, basename
+    filename, ext = splitext(basename(parsed_url.path))
+    return filename, ext
 
 def get_n_random_image_urls(n):
     urls = []
@@ -40,12 +48,15 @@ def download_images_to_disk(urls):
     for i, url in enumerate(urls):
         # All the urls in the array have '//' prepended. Rolling with it.
         response = requests.get('http:' + url, stream=True)
-        local_filepath = './image-{}'.format(i)
+        filename, ext = get_file_name_from_url(url)
+        local_filepath = './images/{}{}'.format(filename, ext)
+        if not os.path.exists(os.path.dirname(local_filepath)):
+            os.makedirs(os.path.dirname(local_filepath))
         with open(local_filepath, 'wb') as f:
             for chunk in response:
                 f.write(chunk)
 
 
 if __name__ == "__main__":
-    random_urls = get_n_random_image_urls(10)
+    random_urls = get_n_random_image_urls(1)
     download_images_to_disk(random_urls)
