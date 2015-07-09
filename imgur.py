@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 import random
 import requests
+import shutil
 import string
 
 BASE_URL = "http://www.imgur.com/"
@@ -35,5 +36,16 @@ def get_n_random_image_urls(n):
             urls.append(webm_element.attrs["src"])
     return urls
 
+def download_images_to_disk(urls):
+    for i, url in enumerate(urls):
+        # All the urls in the array have '//' prepended. Rolling with it.
+        response = requests.get('http:' + url, stream=True)
+        local_filepath = './image-{}'.format(i)
+        with open(local_filepath, 'wb') as f:
+            for chunk in response:
+                f.write(chunk)
+
+
 if __name__ == "__main__":
-    print get_n_random_image_urls(10)
+    random_urls = get_n_random_image_urls(10)
+    download_images_to_disk(random_urls)
